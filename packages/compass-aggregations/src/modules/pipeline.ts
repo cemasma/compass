@@ -806,13 +806,13 @@ const _executeAggregation = (
   }
 };
 
-const getDebouncedExecuteAgg = (id: string): typeof _executeAggregation => {
+const getDebouncedExecuteAgg = (id: string, leadDebounce?: boolean): typeof _executeAggregation => {
   if (ExecuteAggDebounceMap.has(id)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return ExecuteAggDebounceMap.get(id)!;
   } else {
     const fn = debounce(_executeAggregation, 750, {
-      leading: true,
+      leading: leadDebounce ?? false,
       trailing: true
     });
     ExecuteAggDebounceMap.set(id, fn);
@@ -838,11 +838,12 @@ const executeAggregation = (
   ns: string,
   _dispatch: Dispatch,
   getState: () => RootState,
-  index: number
+  index: number,
+  leadDebounce?: boolean
 ) => {
   const id = `${getState().aggregationWorkspaceId}::${index}`;
   const dispatch = getCancelableExecuteAggDispatch(id, _dispatch);
-  const debouncedExecuteAgg = getDebouncedExecuteAgg(id);
+  const debouncedExecuteAgg = getDebouncedExecuteAgg(id, leadDebounce);
   debouncedExecuteAgg(dataService, ns, dispatch, getState, index);
 };
 
@@ -1033,7 +1034,8 @@ export const runOutStage = (index: number): ThunkAction<void, RootState, void, A
 };
 
 export const runStage = (
-  index: number
+  index: number,
+  leadDebounce?: boolean
 ): ThunkAction<void, RootState, void, AnyAction> => {
   return (dispatch, getState) => {
     const state = getState();
@@ -1051,7 +1053,7 @@ export const runStage = (
     if (dataService) {
       const ns = state.namespace;
       for (let i = index; i < state.pipeline.length; i++) {
-        executeAggregation(dataService, ns, dispatch, getState, i);
+        executeAggregation(dataService, ns, dispatch, getState, i, leadDebounce);
       }
     }
   };
