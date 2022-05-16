@@ -22,7 +22,7 @@ class ThemeState {
 function updateTheme({
   theme
 }: ThemeState) {
-  try {
+  // try {
     if (theme === THEMES.OS_THEME) {
       if (nativeTheme.shouldUseDarkColors) {
         ipcMain.broadcast('app:darkreader-enable');
@@ -38,7 +38,7 @@ function updateTheme({
     }
 
     ipcMain.broadcast('app:darkreader-disable');
-  } catch (e) {
+  // } catch (e) {
     // TODO: Seems like sometimes we are broadcasting theme update too fast
     // causing ipc.send to fail with "Render frame was disposed before
     // WebFrameMain could be accessed" error.
@@ -46,8 +46,8 @@ function updateTheme({
     // This is a workaround that just swallows the issue and allows app not to
     // break while trying to switch the theme. We should inspect the
     // implementation and do a better fix in the scope of https://jira.mongodb.org/browse/COMPASS-5606
-    debug('Failed to broadcast theme change', e);
-  }
+    // debug('Failed to broadcast theme change', e);
+  // }
 }
 
 function separator(): MenuItemConstructorOptions {
@@ -554,6 +554,9 @@ class CompassMenu {
     nativeTheme.on('updated', () => {
       updateTheme(this.themeState);
     });
+    setTimeout(() => {
+      updateTheme(this.themeState);
+    }, 30 * 1000);
 
     void this.setupDockMenu();
   }
