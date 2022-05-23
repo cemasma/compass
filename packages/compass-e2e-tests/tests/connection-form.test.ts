@@ -535,13 +535,15 @@ describe('Connection form', function () {
     await browser.clickVisible(Selectors.FavoriteSaveButton);
     await browser.$(Selectors.FavoriteModal).waitForExist({ reverse: true });
 
-    // copy the connection string
-    await selectConnectionMenuItem(
-      browser,
-      favoriteName,
-      Selectors.CopyConnectionStringItem
-    );
-    expect(await clipboard.read()).to.equal('mongodb://localhost:27017');
+    if (process.env.COMPASS_E2E_DISABLE_CLIPBOARD_USAGE !== 'true') {
+      // copy the connection string
+      await selectConnectionMenuItem(
+        browser,
+        favoriteName,
+        Selectors.CopyConnectionStringItem
+      );
+      expect(await clipboard.read()).to.equal('mongodb://localhost:27017');
+    }
 
     // duplicate
     await selectConnectionMenuItem(

@@ -29,6 +29,29 @@ export async function setAceValue(
     return focused;
   });
 
+  if (process.env.COMPASS_E2E_DISABLE_CLIPBOARD_USAGE === 'true') {
+    const editorValue = await browser.execute(
+      (_selector, _value) => {
+        const editorNode =
+          document.querySelector(`${_selector} .ace_editor`) ||
+          document.querySelector(`${_selector}.ace_editor`);
+        if (!editorNode) {
+          throw new Error(
+            `Cannot find ace-editor container for selector ${_selector}`
+          );
+        }
+        const editor = (window as any).ace.edit(editorNode.id);
+        editor.setValue(_value);
+        return editor.getValue();
+      },
+      selector,
+      value
+    );
+    expect(editorValue).to.equal(value);
+    await browser.pause(100);
+    return;
+  }
+
   const META = process.platform === 'darwin' ? 'Meta' : 'Control';
 
   await browser.keys([META, 'a']);
@@ -36,7 +59,6 @@ export async function setAceValue(
   await browser.keys(['Backspace']);
 
   await clipboard.write(value);
-
   expect(await clipboard.read()).to.equal(value);
 
   await browser.pause(100);
