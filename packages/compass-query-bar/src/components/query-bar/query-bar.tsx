@@ -11,6 +11,7 @@ import {
   spacing,
   uiColors,
 } from '@mongodb-js/compass-components';
+import type { Listenable } from 'reflux';
 
 import type {
   QueryOption,
@@ -30,7 +31,7 @@ const queryBarFormStyles = css({
   // TODO: This margin and background will go away when the query bar is
   // wrapped in the Toolbar component in each of the plugins. COMPASS-5484
   margin: spacing[3],
-  background: uiColors.white
+  background: uiColors.white,
 });
 
 const queryBarFirstRowStyles = css({
@@ -38,15 +39,16 @@ const queryBarFirstRowStyles = css({
   alignItems: 'center',
   gap: spacing[2],
   padding: `0 ${spacing[2]}px`,
+  margin: `0 ${spacing[1]}px`,
 });
 
 const queryBarFirstRowOpenedStyles = css({
-  paddingBottom: 0
+  paddingBottom: 0,
 });
 
 const openQueryHistoryLabelStyles = css({
   display: 'inline-block',
-  padding: 0,
+  padding: `${spacing[2]}px 0`,
 });
 
 const openQueryHistoryStyles = cx(
@@ -75,31 +77,31 @@ const rowStyles = css({
 });
 
 type QueryBarOptionProps = {
-  filterPlaceholder: string; // The placeholder text for the filter input.
-  filterValid:  boolean; // Whether the filter is valid.
+  filterPlaceholder?: string; // The placeholder text for the filter input.
+  filterValid: boolean; // Whether the filter is valid.
   filterString: string; // The value of the `filter`.
 
-  projectPlaceholder: string;
+  projectPlaceholder?: string;
   projectValid: boolean;
   projectString: string;
 
-  sortPlaceholder: string;
+  sortPlaceholder?: string;
   sortValid: boolean;
   sortString: string;
 
-  collationPlaceholder: string;
+  collationPlaceholder?: string;
   collationValid: boolean;
   collationString: string;
 
-  skipPlaceholder: string;
+  skipPlaceholder?: string;
   skipValid: boolean;
   skipString: string;
 
-  limitPlaceholder: string;
+  limitPlaceholder?: string;
   limitValid: boolean;
   limitString: string;
 
-  maxTimeMSPlaceholder: string;
+  maxTimeMSPlaceholder?: string;
   maxTimeMSValid: boolean;
   maxTimeMSString: string;
 };
@@ -114,7 +116,7 @@ type QueryBarProps = {
   onChangeQueryOption: (queryOption: QueryOption, value: string) => void;
   onReset: () => void;
   queryState: 'apply' | 'reset';
-  refreshEditorAction: () => void;
+  refreshEditorAction: Listenable;
   schemaFields: string[];
   serverVersion: string;
   showQueryHistoryButton?: boolean;
@@ -127,13 +129,6 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
   autoPopulated,
   buttonLabel = 'Apply',
   expanded: isQueryOptionsExpanded = false,
-  // filterValid: isFilterValid,
-  // layout = [
-  //   'filter',
-  //   'project',
-  //   ['sort', 'maxTimeMS'],
-  //   ['collation', 'skip', 'limit'],
-  // ],
   layout = [
     'filter',
     ['project', 'sort'],
@@ -150,66 +145,8 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
   toggleExpandQueryOptions,
   toggleQueryHistory: _toggleQueryHistory,
   valid: isQueryValid,
-
-  // filterPlaceholder, // The placeholder text for the filter input.
-  // filterValid, // Whether the filter is valid.
-  // filterString, // The value of the `filter`.
-
-  // projectPlaceholder,
-  // projectValid,
-  // projectString,
-
-  // sortPlaceholder,
-  // sortValid,
-  // sortString,
-
-  // collationPlaceholder,
-  // collationValid,
-  // collationString,
-
-  // skipPlaceholder,
-  // skipValid,
-  // skipString,
-
-  // limitPlaceholder,
-  // limitValid,
-  // limitString,
-
-  // maxTimeMSPlaceholder,
-  // maxTimeMSValid,
-  // maxTimeMSString,
   ...propsOfQuerys
 }) => {
-  // const propsOfQuerys = {
-  //   filterPlaceholder,
-  //   filterValid,
-  //   filterString,
-
-  //   projectPlaceholder,
-  //   projectValid,
-  //   projectString,
-
-  //   sortPlaceholder,
-  //   sortValid,
-  //   sortString,
-
-  //   collationPlaceholder,
-  //   collationValid,
-  //   collationString,
-
-  //   skipPlaceholder,
-  //   skipValid,
-  //   skipString,
-
-  //   limitPlaceholder,
-  //   limitValid,
-  //   limitString,
-
-  //   maxTimeMSPlaceholder,
-  //   maxTimeMSValid,
-  //   maxTimeMSString,
-  // };
-  // console.log('propsOfQuerys', propsOfQuerys);
 
   const onReset = useCallback(
     (evt: React.MouseEvent) => {
@@ -239,21 +176,11 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
 
   const renderQueryOption = useCallback(
     (queryOption: QueryOption) => {
-      // const hasError = !propsOfQuerys[`${queryOption}Valid`]
-        // queryOption === 'filter'
-        //   // ? !isFilterValid
-          // : !propsOfQuerys[`${queryOption}Valid`];
-      const hasError = 
-        queryOption === 'filter'
-          // ? !isQueryValid
-          ? !propsOfQuerys[`${queryOption}Valid`]
-          : !propsOfQuerys[`${queryOption}Valid`];
+      const hasError = !propsOfQuerys[`${queryOption}Valid`];
 
       const placeholder =
         propsOfQuerys[`${queryOption}Placeholder`] ||
         OPTION_DEFINITION[queryOption].placeholder;
-
-      // console.log('render render', queryOption, propsOfQuerys[`${queryOption}Valid`], hasError);
 
       return (
         <QueryOptionComponent
@@ -261,9 +188,7 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
           hasError={hasError}
           key={`query-option-${queryOption}`}
           queryOption={queryOption}
-          onChange={(evt: React.ChangeEvent<HTMLInputElement>) =>
-            onChangeQueryOption(queryOption, evt.target.value)
-          }
+          onChange={(value: string) => onChangeQueryOption(queryOption, value)}
           onApply={onApply}
           placeholder={placeholder}
           refreshEditorAction={refreshEditorAction}
@@ -275,44 +200,13 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
     },
     [
       autoPopulated,
-      // isFilterValid,
       onApply,
       onChangeQueryOption,
-      // props,
       refreshEditorAction,
       schemaFields,
       serverVersion,
 
-      // ...propsOfQuerys,
-      // propsOfQuerys,
-
-      propsOfQuerys.filterPlaceholder,
-      propsOfQuerys.filterValid,
-      propsOfQuerys.filterString,
-
-      propsOfQuerys.projectPlaceholder,
-      propsOfQuerys.projectValid,
-      propsOfQuerys.projectString,
-
-      propsOfQuerys.sortPlaceholder,
-      propsOfQuerys.sortValid,
-      propsOfQuerys.sortString,
-
-      propsOfQuerys.collationPlaceholder,
-      propsOfQuerys.collationValid,
-      propsOfQuerys.collationString,
-
-      propsOfQuerys.skipPlaceholder,
-      propsOfQuerys.skipValid,
-      propsOfQuerys.skipString,
-
-      propsOfQuerys.limitPlaceholder,
-      propsOfQuerys.limitValid,
-      propsOfQuerys.limitString,
-
-      propsOfQuerys.maxTimeMSPlaceholder,
-      propsOfQuerys.maxTimeMSValid,
-      propsOfQuerys.maxTimeMSString,
+      propsOfQuerys
     ]
   );
 
@@ -329,7 +223,7 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
     [renderQueryOption]
   );
 
-  const firstRowQueryOptions = useCallback(
+  const firstRowQueryOptions = useMemo(
     () =>
       layout.map((queryOption: string | string[], index: number) =>
         index === 0 ? renderQueryOptionRow(queryOption, index) : null
@@ -337,7 +231,7 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
     [layout, renderQueryOptionRow]
   );
 
-  const additionalQueryOptions = useCallback(
+  const additionalQueryOptions = useMemo(
     () =>
       layout.map((queryOption: string | string[], index: number) =>
         isQueryOptionsExpanded && index > 0
@@ -357,8 +251,13 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
   );
 
   return (
-    <form className={queryBarFormStyles} onSubmit={onFormSubmit}>
-      <div className={cx(queryBarFirstRowStyles, isQueryOptionsExpanded && queryBarFirstRowOpenedStyles)}>
+    <form className={queryBarFormStyles} onSubmit={onFormSubmit} noValidate>
+      <div
+        className={cx(
+          queryBarFirstRowStyles,
+          isQueryOptionsExpanded && queryBarFirstRowOpenedStyles
+        )}
+      >
         {showQueryHistoryButton && (
           <>
             <Label
@@ -373,13 +272,14 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
               className={openQueryHistoryStyles}
               id="open-query-history"
               aria-label="Open query history"
+              type="button"
             >
               <Icon glyph="Clock" />
               <Icon glyph="CaretDown" />
             </button>
           </>
         )}
-        {firstRowQueryOptions()}
+        {firstRowQueryOptions}
         <Button
           data-test-id="query-bar-apply-filter-button"
           disabled={!isQueryValid}
@@ -405,10 +305,8 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
           onToggleOptions={toggleExpandQueryOptions}
         />
       </div>
-      <div
-        id="additional-query-options-container"
-      >
-        {additionalQueryOptions()}
+      <div id="additional-query-options-container">
+        {additionalQueryOptions}
       </div>
     </form>
   );

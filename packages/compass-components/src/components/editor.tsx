@@ -86,7 +86,7 @@ function Editor({
 
   return (
     <AceEditor
-      ref={ref => editorRef.current = ref}
+      ref={(ref) => (editorRef.current = ref)}
       mode={
         variant === 'Generic'
           ? undefined

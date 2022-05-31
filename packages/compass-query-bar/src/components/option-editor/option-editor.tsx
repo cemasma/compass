@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { QueryAutoCompleter } from 'mongodb-ace-autocompleter';
 import {
   Editor,
@@ -10,54 +9,72 @@ import {
   focusRingStyles,
   focusRingVisibleStyles,
   uiColors,
-  spacing
+  spacing,
 } from '@mongodb-js/compass-components';
+import type { Listenable } from 'reflux';
 
-import styles from './option-editor.module.less';
+import type { QueryOption as QueryOptionType } from '../../constants/query-option-definition';
 
-const editorStyles = cx(css({
-  border: `1px solid transparent`,
-  // boxShadow: 'inset 0px 0px 0px 1px transparent',
-  borderRadius: '6px',
-  '&:hover': {
-    '&::after': {
-      boxShadow: `0 0 0 3px ${uiColors.gray.light1}`,
-      transitionTimingFunction: 'ease-out',
-    }
-  },
-  '&:focus-within': focusRingVisibleStyles,
-}), focusRingStyles);
+const editorStyles = cx(
+  css({
+    '&::before': {
+      position: 'absolute',
+      content: '""',
+      pointerEvents: 'none',
+      top: 3,
+      right: 3,
+      bottom: 3,
+      left: 3,
+      borderRadius: spacing[1],
+      boxShadow: 'inset 0px 0px 0px 0px transparent',
+      transition: 'box-shadow .16s ease-in',
+    },
+    borderRadius: '6px',
+    '&:hover': {
+      '&::after': {
+        boxShadow: `0 0 0 3px ${uiColors.gray.light2}`,
+        transitionTimingFunction: 'ease-out',
+      },
+    },
+    '&:focus-within': focusRingVisibleStyles,
+  }),
+  focusRingStyles
+);
 
 const editorWithErrorStyles = css({
-  borderColor: uiColors.red.base,
-  // boxShadow: `inset 0px 0px 0px 1px ${uiColors.red.base}`,
-  '&:hover, &:focus-within': {
-    '&::after': {
-      boxShadow: `0 0 0 3px ${uiColors.red.light2}`,
-      transitionTimingFunction: 'ease-out',
-    }
+  '&:focus-within': {
+    '&::before': {
+      boxShadow: 'inset 0 0 0 1px transparent',
+    },
+  },
+  '&::before': {
+    zIndex: 5,
+    boxShadow: `inset 0px 0px 0px 1px ${uiColors.red.base}`,
   },
 });
 
-class OptionEditor extends Component {
-  static displayName = 'OptionEditor';
+type OptionEditorProps = {
+  autoPopulated: boolean;
+  hasError: boolean;
+  id: string;
+  onChange: (value: string) => void;
+  onApply: () => void;
+  placeholder?: string;
+  queryOption: QueryOptionType;
+  refreshEditorAction: Listenable;
+  schemaFields?: string[];
+  serverVersion?: string;
+  value?: any;
+};
 
-  static propTypes = {
-    label: PropTypes.string.isRequired,
-    serverVersion: PropTypes.string.isRequired,
-    autoPopulated: PropTypes.bool.isRequired,
-    hasError: PropTypes.bool.isRequired,
-    refreshEditorAction: PropTypes.func.isRequired,
-    id: PropTypes.string,
-    value: PropTypes.any,
-    onChange: PropTypes.func,
-    onApply: PropTypes.func,
-    placeholder: PropTypes.string,
-    schemaFields: PropTypes.array,
-  };
+export class OptionEditor extends Component<OptionEditorProps> {
+  completer: any;
+  boundOnFieldsChanged: (schemaFields?: string[]) => void;
+  unsub?: () => void;
+  editor: any;
 
   static defaultProps = {
-    label: '',
+    queryOption: '',
     value: '',
     serverVersion: '3.6.0',
     autoPopulated: false,
@@ -69,7 +86,7 @@ class OptionEditor extends Component {
    *
    * @param {Object} props - The properties.
    */
-  constructor(props) {
+  constructor(props: OptionEditorProps) {
     super(props);
     this.completer = new QueryAutoCompleter(
       props.serverVersion,
@@ -82,7 +99,7 @@ class OptionEditor extends Component {
   /**
    * Subscribe on mount.
    */
-  componentDidMount() {
+  componentDidMount(): void {
     this.unsub = this.props.refreshEditorAction.listen(() => {
       this.editor.setValue(this.props.value);
       this.editor.clearSelection();
@@ -94,61 +111,47 @@ class OptionEditor extends Component {
    *
    * @returns {Boolean} If the component should update.
    */
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps: OptionEditorProps): boolean {
     this.boundOnFieldsChanged(nextProps.schemaFields);
     return (
       nextProps.autoPopulated ||
-      nextProps.serverVersion !== this.props.serverVersion,
-      nextProps.hasError !== this.props.hasError
+      nextProps.serverVersion !== this.props.serverVersion
     );
   }
 
   /**
    * Unsubscribe listeners.
    */
-  componentWillUnmount() {
-    this.unsub();
+  componentWillUnmount(): void {
+    this.unsub?.();
   }
 
-  onFieldsChanged(fields) {
-    this.completer.update(fields);
+  onFieldsChanged(schemaFields?: string[]): void {
+    this.completer.update(schemaFields);
   }
-
-  /**
-   * Handle the changing of the query text.
-   *
-   * @param {String} newCode - The new query.
-   */
-  onChangeQuery = (newCode) => {
-    this.props.onChange({
-      target: {
-        value: newCode,
-      },
-    });
-  };
 
   /**
    * Render the editor.
    *
    * @returns {Component} The component.
    */
-  render() {
-    console.log('label', this.props.label, 'has error', this.props.hasError);
-    
+  render(): JSX.Element {
     return (
       <Editor
         variant={EditorVariant.Shell}
-        className={cx(editorStyles, this.props.hasError && editorWithErrorStyles)}//={styles['option-editor']}
+        className={cx(
+          editorStyles,
+          this.props.hasError && editorWithErrorStyles
+        )}
         theme="mongodb-query"
         text={this.props.value}
-        hasError={this.props.hasError}
-        onChangeText={this.onChangeQuery}
-        name={`query-bar-option-input-${this.props.label}`}
+        onChangeText={(value) => this.props.onChange(value)}
+        name={`query-bar-option-input-${this.props.queryOption}`}
         options={{
           useSoftTabs: true,
           minLines: 1,
           maxLines: 10,
-          fontSize: 13,
+          fontSize: 12,
           highlightActiveLine: false,
           showPrintMargin: false,
           showGutter: false,

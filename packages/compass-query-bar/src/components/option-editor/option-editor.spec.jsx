@@ -25,13 +25,12 @@ describe('OptionEditor [Component]', function () {
 
   context('when rendering the component', function () {
     before(function () {
-      const actions = configureActions();
       component = mount(
         <OptionEditor
           label="Apply"
           serverVersion="3.4.0"
           autoPopulated={false}
-          refreshEditorAction={actions.refreshEditor}
+          refreshEditorAction={configureActions().refreshEditor}
           value="{ name: 'testing' }"
           onChange={onChangeSpy}
           onApply={onApplySpy}
