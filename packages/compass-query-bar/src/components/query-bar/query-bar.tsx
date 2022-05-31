@@ -110,7 +110,6 @@ type QueryBarProps = {
   autoPopulated: boolean;
   buttonLabel?: string;
   expanded: boolean;
-  // filterValid: boolean;
   layout?: QueryBarLayout;
   onApply: () => void;
   onChangeQueryOption: (queryOption: QueryOption, value: string) => void;
@@ -145,9 +144,8 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
   toggleExpandQueryOptions,
   toggleQueryHistory: _toggleQueryHistory,
   valid: isQueryValid,
-  ...propsOfQuerys
+  ...queryOptionProps
 }) => {
-
   const onReset = useCallback(
     (evt: React.MouseEvent) => {
       // Prevent form submission.
@@ -176,10 +174,10 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
 
   const renderQueryOption = useCallback(
     (queryOption: QueryOption) => {
-      const hasError = !propsOfQuerys[`${queryOption}Valid`];
+      const hasError = !queryOptionProps[`${queryOption}Valid`];
 
       const placeholder =
-        propsOfQuerys[`${queryOption}Placeholder`] ||
+        queryOptionProps[`${queryOption}Placeholder`] ||
         OPTION_DEFINITION[queryOption].placeholder;
 
       return (
@@ -194,7 +192,7 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
           refreshEditorAction={refreshEditorAction}
           schemaFields={schemaFields}
           serverVersion={serverVersion}
-          value={propsOfQuerys[`${queryOption}String`]}
+          value={queryOptionProps[`${queryOption}String`]}
         />
       );
     },
@@ -205,8 +203,7 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
       refreshEditorAction,
       schemaFields,
       serverVersion,
-
-      propsOfQuerys
+      queryOptionProps,
     ]
   );
 
