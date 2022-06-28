@@ -16,7 +16,7 @@ export async function setValueVisible(
         console.log(actualValue, '!==', value);
       }
       return actualValue === value;
-    },
-    { timeout: 60000 }
+    }
+    // { timeout: 60000 }
   );
 }

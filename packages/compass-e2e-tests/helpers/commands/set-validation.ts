@@ -18,7 +18,7 @@ export async function setValidation(
   // both buttons should become hidden if it succeeds
   await validationActionMessageElement.waitForDisplayed({
     // since this is a db query the default timeout might not be long enough
-    timeout: 30_000,
+    // timeout: 30_000,
     reverse: true,
   });
 

@@ -2,7 +2,8 @@ import type { CompassBrowser } from '../compass-browser';
 import type { ConnectFormState } from '../connect-form-state';
 import * as Selectors from '../selectors';
 
-const defaultTimeoutMS = 30_000;
+// const defaultTimeoutMS = 30_000;
+const defaultTimeoutMS = 120_000;
 
 export async function connectWithConnectionForm(
   browser: CompassBrowser,

@@ -370,7 +370,9 @@ async function startCompass(opts: StartCompassOptions = {}): Promise<Compass> {
 
   // https://webdriver.io/docs/options/#webdriverio
   const wdioOptions = {
-    waitforTimeout: 10000, // default is 3000ms
+    // waitforTimeout: 10000, // default is 3000ms
+    // TODO: testing if this will help macos
+    waitforTimeout: 120_000, // default is 3000ms
     waitforInterval: 100, // default is 500ms
   };
 

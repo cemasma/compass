@@ -3,7 +3,8 @@ import type { CompassBrowser } from '../compass-browser';
 export async function existsEventually(
   browser: CompassBrowser,
   selector: string,
-  timeout = 10000
+  // timeout = 10000
+  timeout = 120_000
 ): Promise<boolean> {
   try {
     // return true if it exists before the timeout expires

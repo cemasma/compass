@@ -22,8 +22,8 @@ export async function listenForTelemetryEvents(
           ipcRenderer.send('compass:usage:flush');
         });
         return !!lookupNewEvent(eventName);
-      },
-      { timeout: 20000 }
+      }
+      // { timeout: 20000 }
     );
 
     const ev = lookupNewEvent(eventName);

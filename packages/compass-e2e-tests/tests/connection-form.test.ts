@@ -610,7 +610,7 @@ describe('Connection form', function () {
     // Wait for it to connect
     const element = await browser.$(Selectors.MyQueriesList);
     await element.waitForDisplayed({
-      timeout: 30_000,
+      // timeout: 30_000,
     });
 
     // It should use the new favorite name as the connection name in the top-left corner
@@ -627,7 +627,9 @@ async function selectConnectionMenuItem(
 ) {
   const selector = Selectors.sidebarFavorite(favoriteName);
   // It takes some time for the favourites to load
-  await browser.$(selector).waitForDisplayed({ timeout: 60_000 });
+  await browser.$(selector).waitForDisplayed({
+    // timeout: 60_000
+  });
   await browser.hover(selector);
 
   await browser.clickVisible(Selectors.sidebarFavoriteMenuButton(favoriteName));

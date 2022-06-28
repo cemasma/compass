@@ -110,7 +110,7 @@ describe('FLE2', function () {
       // Wait for it to connect
       const element = await browser.$(Selectors.MyQueriesList);
       await element.waitForDisplayed({
-        timeout: 30_000,
+        // timeout: 30_000,
       });
 
       console.log('Compass userDataPath:');

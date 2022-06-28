@@ -21,7 +21,7 @@ async function importJSONFile(browser: CompassBrowser, jsonPath: string) {
 
   // wait for the modal to appear and select the file
   const importModal = await browser.$(Selectors.ImportModal);
-  await importModal.waitForDisplayed({ timeout: 10_000 });
+  await importModal.waitForDisplayed();
   await browser.selectFile(Selectors.ImportFileInput, jsonPath);
 
   // make sure it auto-selected JSON and then confirm
@@ -34,7 +34,9 @@ async function importJSONFile(browser: CompassBrowser, jsonPath: string) {
 
   // wait for the done button to appear and then click it
   const doneButton = await browser.$(Selectors.ImportDone);
-  await doneButton.waitForDisplayed({ timeout: 60_000 });
+  await doneButton.waitForDisplayed({
+    // timeout: 60_000
+  });
   await browser.clickVisible(Selectors.ImportDone);
 
   // wait for the modal to go away
@@ -407,7 +409,7 @@ describe('Collection import', function () {
 
     // wait for the modal to appear and select the file
     const importModal = await browser.$(Selectors.ImportModal);
-    await importModal.waitForDisplayed({ timeout: 10_000 });
+    await importModal.waitForDisplayed();
     await browser.selectFile(Selectors.ImportFileInput, jsonPath);
 
     // select file type JSON
@@ -446,7 +448,7 @@ describe('Collection import', function () {
 
     // wait for the modal to appear and select the file
     const importModal = await browser.$(Selectors.ImportModal);
-    await importModal.waitForDisplayed({ timeout: 10_000 });
+    await importModal.waitForDisplayed();
     await browser.selectFile(Selectors.ImportFileInput, csvPath);
 
     // make sure it auto-selected CSV
@@ -484,7 +486,9 @@ describe('Collection import', function () {
 
     // wait for the done button to appear and then click it
     const doneButton = await browser.$(Selectors.ImportDone);
-    await doneButton.waitForDisplayed({ timeout: 60_000 });
+    await doneButton.waitForDisplayed({
+      // timeout: 60_000
+    });
 
     await browser.clickVisible(Selectors.ImportDone);
 
@@ -545,7 +549,7 @@ describe('Collection import', function () {
 
     // wait for the modal to appear and select the file
     const importModal = await browser.$(Selectors.ImportModal);
-    await importModal.waitForDisplayed({ timeout: 10_000 });
+    await importModal.waitForDisplayed();
     await browser.selectFile(Selectors.ImportFileInput, csvPath);
 
     // make sure it auto-selected CSV
@@ -580,7 +584,9 @@ describe('Collection import', function () {
 
     // wait for the done button to appear and then click it
     const doneButton = await browser.$(Selectors.ImportDone);
-    await doneButton.waitForDisplayed({ timeout: 60_000 });
+    await doneButton.waitForDisplayed({
+      // timeout: 60_000
+    });
 
     await browser.clickVisible(Selectors.ImportDone);
 
@@ -625,7 +631,9 @@ describe('Collection import', function () {
 
     // wait for the modal to appear and select the file
     const importModal = await browser.$(Selectors.ImportModal);
-    await importModal.waitForDisplayed({ timeout: 10_000 });
+    await importModal.waitForDisplayed({
+      // timeout: 10_000
+    });
     await browser.selectFile(Selectors.ImportFileInput, csvPath);
 
     // make sure it auto-selected CSV

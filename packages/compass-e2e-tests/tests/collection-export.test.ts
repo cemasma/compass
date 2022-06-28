@@ -97,7 +97,7 @@ describe('Collection export', function () {
     const exportModalElement = await browser.$(Selectors.ExportModal);
     await exportModalElement.waitForDisplayed({
       reverse: true,
-      timeout: 30_000, // Fixes flaky macOS CI.
+      // timeout: 30_000, // Fixes flaky macOS CI.
     });
 
     // confirm that we exported what we expected to export
@@ -166,7 +166,7 @@ describe('Collection export', function () {
     const exportModalElement = await browser.$(Selectors.ExportModal);
     await exportModalElement.waitForDisplayed({
       reverse: true,
-      timeout: 30_000, // Fixes flaky macOS CI.
+      // timeout: 30_000, // Fixes flaky macOS CI.
     });
 
     // confirm that we exported what we expected to
@@ -226,7 +226,7 @@ describe('Collection export', function () {
     const exportModalElement = await browser.$(Selectors.ExportModal);
     await exportModalElement.waitForDisplayed({
       reverse: true,
-      timeout: 30_000, // Fixes flaky macOS CI.
+      // timeout: 30_000, // Fixes flaky macOS CI.
     });
 
     // make sure we exported what we expected to export
@@ -297,7 +297,7 @@ describe('Collection export', function () {
     const exportModalElement = await browser.$(Selectors.ExportModal);
     await exportModalElement.waitForDisplayed({
       reverse: true,
-      timeout: 30_000, // Fixes flaky macOS CI.
+      // timeout: 30_000, // Fixes flaky macOS CI.
     });
 
     // confirm that we exported what we expected to export
@@ -364,7 +364,7 @@ describe('Collection export', function () {
     const exportModalElement = await browser.$(Selectors.ExportModal);
     await exportModalElement.waitForDisplayed({
       reverse: true,
-      timeout: 30_000, // Fixes flaky macOS CI.
+      // timeout: 30_000, // Fixes flaky macOS CI.
     });
 
     // confirm that we exported what we expected to
@@ -422,7 +422,7 @@ describe('Collection export', function () {
     const exportModalElement = await browser.$(Selectors.ExportModal);
     await exportModalElement.waitForDisplayed({
       reverse: true,
-      timeout: 30_000, // Fixes flaky macOS CI.
+      // timeout: 30_000, // Fixes flaky macOS CI.
     });
 
     // make sure we exported what we expected to export
