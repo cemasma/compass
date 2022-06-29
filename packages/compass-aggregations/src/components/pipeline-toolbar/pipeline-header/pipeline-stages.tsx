@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  Pipeline,
-  Stage,
+  // Pipeline,
+  // Stage,
   Description,
   Link,
   css,
@@ -74,11 +74,14 @@ export const PipelineStages: React.FunctionComponent<PipelineStagesProps> = ({
           )}
         </Description>
       ) : (
-        <Pipeline size="small">
-          {stages.map((stage, index) => (
-            <Stage key={`${index}-${stage}`}>{stage}</Stage>
-          ))}
-        </Pipeline>
+        <div>
+          Pipeline placeholder
+        </div>
+        // <Pipeline size="small">
+        //   {stages.map((stage, index) => (
+        //     <Stage key={`${index}-${stage}`}>{stage}</Stage>
+        //   ))}
+        // </Pipeline>
       )}
       {isResultsMode && (
         <Button
