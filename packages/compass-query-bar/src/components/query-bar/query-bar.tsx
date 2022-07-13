@@ -153,6 +153,15 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
     }
   }, [ showQueryHistory, queryHistoryPositioned ]);
 
+  useEffect(() => {
+    return () => {
+      // When unmounting close the query history.
+      if (showQueryHistory) {
+        setShowQueryHistory(false);
+      }
+    }
+  }, []);
+
   return (
     <div className={queryBarStyles}>
       {showQueryHistoryButton && (
