@@ -5,7 +5,6 @@ import {
   Label,
   MoreOptionsToggle,
   Popover,
-  Portal,
   css,
   cx,
   focusRingStyles,
@@ -35,20 +34,14 @@ const openQueryHistoryLabelStyles = css({
 });
 
 const queryHistoryContainerStyles = css({
-  position: 'absolute',
-  top: spacing[4],
-  left: spacing[6],
-  zIndex: 1000,
-  height: '50vh'
+  display: 'flex',
+  height: '100%'
 });
 
-const queryHistoryPortalStyles = css({
-  position: 'relative',
-  top: spacing[4],
-  left: spacing[6],
-  zIndex: 1000,
-  height: '50vh'
-})
+const queryHistoryPopoverStyles = css({
+  maxHeight: 'calc(100vh - 260px)',
+  display: 'flex',
+});
 
 const openQueryHistoryStyles = cx(
   css({
@@ -78,6 +71,44 @@ type QueryBarProps = {
   appRegistry: AppRegistry;
 };
 
+// Hook
+function useOnClickOutside(
+  ref: React.RefObject<HTMLDivElement>,
+  buttonRef: React.RefObject<HTMLButtonElement>,
+  useHook: boolean,
+  handler: (event: Event) => void
+) {
+  useEffect(
+    () => {
+      if (useHook) {
+        const listener: EventListener = (event) => {
+          // Do nothing if clicking ref's element or descendent elements
+          if (!ref.current || ref.current.contains(event.target)) {
+            return;
+          }
+          if (!buttonRef.current || buttonRef.current.contains(event.target)) {
+            return;
+          }
+          handler(event);
+        };
+        document.addEventListener('mousedown', listener);
+        document.addEventListener('touchstart', listener);
+        return () => {
+          document.removeEventListener('mousedown', listener);
+          document.removeEventListener('touchstart', listener);
+        };
+      }
+    },
+    // Add ref and handler to effect dependencies
+    // It's worth noting that because passed in handler is a new ...
+    // ... function on every render that will cause this effect ...
+    // ... callback/cleanup to run every render. It's not a big deal ...
+    // ... but to optimize you can wrap handler in useCallback before ...
+    // ... passing it into this hook.
+    [ ref, buttonRef, handler, useHook ]
+  );
+}
+
 export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
   buttonLabel = 'Apply',
   expanded: isQueryOptionsExpanded = false,
@@ -90,77 +121,22 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
   toggleQueryHistory,
   store
 }) => {
-  // const QueryHistoryComponent = u
-
-  // const QueryHistoryComponent = localAppRegistry;
-  console.log('localAppRegistrylocalAppRegistry', store.localAppRegistry, store.globalAppRegistry);//, store);
-  // console.log('appRegistry', store.localAppRegistry, store.appRegistry);//, store);
-  // console.log('localAppRegistrylocalAppRegistry', store.localAppRegistry, store.appRegistry);//, store);
-  console.log('store.globalAppRegistry', store.globalAppRegistry);
-
-  // console.log()
-  // const queryHistoryComponent = store.globalAppRegistry.getRole('Query.History')
-  // console.log('queryHistoryComponent', queryHistoryComponent);
-  console.log('query history store', store.localAppRegistry.getStore('Query.History'));
-  // const queryHistoryStore = store.localAppRegistry.getStore('Query.History');
-  // const queryHistoryActions = store.localAppRegistry.getAction('Query.History');
-
-  // console.log('queryHistoryActions', queryHistoryActions);
-  // const QueryHistoryComponent = store.globalAppRegistry.getRole('Query.QueryHistory')[0].component;
-
-  // const QueryHistoryRole = store.localAppRegistry.getRole('Query.QueryHistory')[0];
-
   const queryHistoryStore = store.localAppRegistry.getStore('Query.History');
   const queryHistoryActions = store.localAppRegistry.getAction('Query.History.Actions');
   const QueryHistoryComponent = store.globalAppRegistry.getRole('Query.QueryHistory')[0].component;
 
-  // const queryHistoryStore = store.localAppRegistry.getStore('Query.History');
-  // const queryHistoryActions = store.localAppRegistry.getAction('Query.History');
-  // const QueryHistoryComponent = store.globalAppRegistry.getRole('Query.QueryHistory')[0].component;
-  console.log('QueryHistoryComponent', QueryHistoryComponent);
-  console.log('queryHistoryActions', queryHistoryActions);
-  console.log('queryHistoryStore', queryHistoryStore);
-
   const queryHistoryButtonRef = useRef<HTMLButtonElement>(null);
 
-  // {scopedModals.map((modal: any) => (
-  //   <modal.component
-  //     store={modal.store}
-  //     actions={modal.actions}
-  //     key={modal.key}
-  //   />
-  // ))}
-
-  const queryHistoryPosition = useRef({
-    x: 0,
-    y: 0,
-  });
-  const [ queryHistoryPositioned, setQueryHistoryPositioned ] = useState(false);
+  const queryHistoryContainerRef = useRef<HTMLDivElement>(null);
 
   const [ showQueryHistory, setShowQueryHistory ] = useState(false); 
 
-  useEffect(() => {
-    if (showQueryHistory) {
-      const boundingBox = queryHistoryButtonRef.current!.getBoundingClientRect();
-      console.log('position:', boundingBox);
-      queryHistoryPosition.current = {
-        x: boundingBox.left,
-        y: boundingBox.top + boundingBox.height
-      };
-      setQueryHistoryPositioned(true);
-    } else if (queryHistoryPositioned) {
-      setQueryHistoryPositioned(false)
-    }
-  }, [ showQueryHistory, queryHistoryPositioned ]);
-
-  useEffect(() => {
-    return () => {
-      // When unmounting close the query history.
-      if (showQueryHistory) {
-        setShowQueryHistory(false);
-      }
-    }
-  }, []);
+  useOnClickOutside(
+    queryHistoryContainerRef,
+    queryHistoryButtonRef,
+    showQueryHistory,
+    () => setShowQueryHistory(false)
+  );
 
   return (
     <div className={queryBarStyles}>
@@ -174,7 +150,6 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
           </Label>
           <button
             data-test-id="query-history-button"
-            // onClick={toggleQueryHistory}
             onClick={() => setShowQueryHistory(!showQueryHistory)}
             className={openQueryHistoryStyles}
             id="open-query-history"
@@ -183,37 +158,6 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
           >
             <Icon glyph="Clock" />
             <Icon glyph="CaretDown" />
-            {/* {showQueryHistory && queryHistoryPositioned && (
-              <Portal
-                // className={queryHistoryPortalStyles}
-                className={css({
-                  position: 'absolute',
-                  top: queryHistoryPosition.current.y + spacing[2],
-                  left: queryHistoryPosition.current.x
-                })}
-              >
-                <QueryHistoryComponent
-                  onClickClose={() => setShowQueryHistory(false)}
-                  store={queryHistoryStore}
-                  actions={queryHistoryActions}
-                />
-              </Portal>
-            )} */}
-            {/* <Popover
-              align="bottom"
-              justify="start"
-              active={showQueryHistory}
-              usePortal
-              adjustOnMutation
-              // spacing={10}
-              spacing={spacing[2]}
-            >
-              <QueryHistoryComponent
-                onClickClose={() => setShowQueryHistory(false)}
-                store={queryHistoryStore}
-                actions={queryHistoryActions}
-              />
-            </Popover> */}
           </button>
           <Popover
             align="bottom"
@@ -221,36 +165,22 @@ export const QueryBar: React.FunctionComponent<QueryBarProps> = ({
             active={showQueryHistory}
             usePortal
             adjustOnMutation
-            // spacing={10}
-            spacing={-spacing[2]}
-            // spacing={0}
+            spacing={0}
             popoverZIndex={99999}
-            className={css({
-              marginLeft: spacing[6]
-            })}
-            onClick={() => {
-              console.log('on click!!!');
-            }}
+            className={queryHistoryPopoverStyles}
+            refEl={queryHistoryButtonRef}
           >
-            <QueryHistoryComponent
-              onClickClose={() => setShowQueryHistory(false)}
-              store={queryHistoryStore}
-              actions={queryHistoryActions}
-            />
+            <div
+              className={queryHistoryContainerStyles}
+              ref={queryHistoryContainerRef}
+            >
+              <QueryHistoryComponent
+                onClickClose={() => setShowQueryHistory(false)}
+                store={queryHistoryStore}
+                actions={queryHistoryActions}
+              />
+            </div>
           </Popover>
-          {/* {showQueryHistory && (
-            // localAppRegistry
-            <>
-            
-              <div className={queryHistoryContainerStyles}>
-                <QueryHistoryComponent
-                  collapsed={false}
-                  store={queryHistoryStore}
-                  actions={queryHistoryActions}
-                />
-              </div>
-            </>
-          )} */}
         </>
       )}
       <div className={queryAreaStyles}>Query Area</div>
