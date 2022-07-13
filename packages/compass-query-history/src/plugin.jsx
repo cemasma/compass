@@ -16,6 +16,8 @@ class Plugin extends Component {
    * @returns {React.Component} The rendered component.
    */
   render() {
+    console.log('render query history plugin', this.props.store, this.props.actions);
+
     return (
       <StoreConnector store={this.props.store}>
         <QueryHistory actions={this.props.actions} {...this.props} />

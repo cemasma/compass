@@ -329,6 +329,25 @@ const createContext = ({
     aggregation,
   });
 
+  const queryHistoryRole = globalAppRegistry.getRole('Query.QueryHistory')[0];
+  localAppRegistry.registerRole('Query.QueryHistory', queryHistoryRole);
+  const queryHistoryActions = setupActions(queryHistoryRole, localAppRegistry);
+  setupStore({
+    role: queryHistoryRole,
+    globalAppRegistry,
+    localAppRegistry,
+    dataService: state.dataService,
+    namespace,
+    serverVersion,
+    isReadonly,
+    isTimeSeries,
+    isClustered,
+    isFLE,
+    actions: queryHistoryActions,
+    query,
+    aggregation,
+  });
+
   // Setup each of the tabs inside the collection tab. They will all get
   // passed the same information and can determine whether they want to
   // use it or not.

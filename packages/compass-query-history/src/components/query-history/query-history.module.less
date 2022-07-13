@@ -13,11 +13,38 @@
   flex: 1;
   animation: 400ms slidein;
   background-color: #f5f6f7;
-  border-left: solid 1px #dddddd;
+  // border-left: solid 1px #dddddd;
+  border: 1px solid #dddddd;
   min-width: 325px;
   max-width: 325px;
   height: 100%;
   order: 3;
+}
+
+// Tooltip like arrow.
+
+.component::before {
+  content: "";
+  position: absolute;
+  top: -11px; 
+  left: 15px;
+  // margin-left: -5px;
+  border-width: 6px;
+  z-index: 5;
+  border-style: solid;
+  border-color: transparent transparent #dddddd transparent;
+}
+.component::after {
+  content: "";
+  position: absolute;
+  top: -9px; 
+  left: 16px;
+  // margin-left: -5px;
+  border-width: 5px;
+  z-index: 10;
+  border-style: solid;
+  border-color: transparent transparent #f5f6f7 transparent;
+  // background: orange;
 }
 
 .inner {

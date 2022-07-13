@@ -59,11 +59,11 @@ class QueryHistory extends PureComponent {
   );
 
   render() {
-    const { collapsed, showing, actions } = this.props;
+    const { collapsed, showing, onClickClose, actions } = this.props;
 
-    if (collapsed) {
-      return null;
-    }
+    // if (collapsed) {
+    //   return null;
+    // }
 
     return (
       <div data-test-id="query-history" className={styles.component}>
@@ -77,6 +77,7 @@ class QueryHistory extends PureComponent {
               data-test-id="query-history-header"
               actions={actions}
               showing={showing}
+              onClickClose={onClickClose}
             />
           </StoreConnector>
 

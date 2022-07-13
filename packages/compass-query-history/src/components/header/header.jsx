@@ -14,6 +14,7 @@ class Header extends PureComponent {
 
   static propTypes = {
     actions: PropTypes.object.isRequired,
+    onClickClose: PropTypes.func.isRequired,
     showing: PropTypes.oneOf(['recent', 'favorites']).isRequired,
   };
 
@@ -50,7 +51,7 @@ class Header extends PureComponent {
   };
 
   render() {
-    const { showing } = this.props;
+    const { onClickClose, showing } = this.props;
     const activeButton = showing === 'recent' ? 'Recent' : 'Favorites';
 
     return (
@@ -65,7 +66,7 @@ class Header extends PureComponent {
         <IconButton
           className={closeButtonStyles}
           data-test-id="query-history-button-close-panel"
-          onClick={this.collapse}
+          onClick={onClickClose}
           aria-label="Close query history"
         >
           <Icon glyph="X" />

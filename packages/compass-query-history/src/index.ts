@@ -14,6 +14,7 @@ const ROLE = {
   configureStore: configureStore,
   configureActions: configureActions,
   storeName: 'Query.History',
+  actionName: 'Query.History.Actions',
 };
 
 /**
@@ -21,7 +22,9 @@ const ROLE = {
  * @param {Object} appRegistry - The Hadron appRegisrty to activate this plugin with.
  **/
 function activate(appRegistry: AppRegistry): void {
-  appRegistry.registerRole('Collection.ScopedModal', ROLE);
+  // appRegistry.registerRole('Collection.ScopedModal', ROLE);
+
+  appRegistry.registerRole('Query.QueryHistory', ROLE);
 }
 
 /**
@@ -29,7 +32,9 @@ function activate(appRegistry: AppRegistry): void {
  * @param {Object} appRegistry - The Hadron appRegisrty to deactivate this plugin with.
  **/
 function deactivate(appRegistry: AppRegistry): void {
-  appRegistry.deregisterRole('Collection.ScopedModal', ROLE);
+  // appRegistry.deregisterRole('Collection.ScopedModal', ROLE);
+
+  appRegistry.deregisterRole('Query.QueryHistory', ROLE);
 }
 
 export default QueryHistoryPlugin;

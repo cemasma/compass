@@ -65,6 +65,7 @@ import {
   Link,
   Description as LeafyGreenDescription,
 } from '@leafygreen-ui/typography';
+import Popover from '@leafygreen-ui/popover';
 
 // 2. Wrap the components that accept darkMode with Compass' theme.
 const Button = withTheme(
@@ -160,6 +161,7 @@ export {
   ModalFooter,
   MongoDBLogoMark,
   MongoDBLogo,
+  Popover,
   RadioBox,
   RadioBoxGroup,
   Radio,
