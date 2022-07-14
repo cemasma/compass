@@ -68,7 +68,7 @@ const queryHistoryContainerStyles = css({
 });
 
 const queryHistoryPopoverStyles = css({
-  maxHeight: 'calc(100vh - 260px)',
+  maxHeight: 'calc(100vh - 280px)',
   display: 'flex',
 });
 

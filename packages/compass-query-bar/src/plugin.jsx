@@ -13,6 +13,7 @@ function Plugin({
   ...props
 }) {
   const onApply = useCallback(() => {
+    console.log('apply!');
     actions.apply();
 
     if (isFunction(_onApply)) {

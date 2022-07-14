@@ -12,7 +12,8 @@ import ZeroGraphic from './zero-graphic';
 import DocumentListView from './document-list-view';
 import DocumentJsonView from './document-json-view';
 import DocumentTableView from './document-table-view';
-import Toolbar from './toolbar';
+import LegacyToolbar from './legacy-toolbar';
+import { CrudToolbar } from './crud-toolbar';
 
 import {
   DOCUMENTS_STATUS_ERROR,
@@ -45,6 +46,7 @@ class DocumentList extends React.Component {
   }
 
   onApplyClicked() {
+    console.log('on apply clicked here');
     this.props.store.refreshDocuments();
   }
 
@@ -242,17 +244,31 @@ class DocumentList extends React.Component {
   render() {
     return (
       <div className="compass-documents">
-        <div className="controls-container">
-          {this.renderQueryBar()}
-          <Toolbar
-            readonly={!this.props.isEditable}
-            insertHandler={this.handleOpenInsert.bind(this)}
-            viewSwitchHandler={this.props.viewChanged}
-            activeDocumentView={this.props.view}
-            {...this.props}
-          />
-        </div>
-        {this.renderOutdatedWarning()}
+        <CrudToolbar
+          activeDocumentView={this.props.view}
+          onApplyClicked={this.onApplyClicked.bind(this)}
+          onResetClicked={this.onResetClicked.bind(this)}
+          insertDataHandler={this.handleOpenInsert.bind(this)}
+          localAppRegistry={this.props.store.localAppRegistry}
+          readonly={!this.props.isEditable}
+          viewSwitchHandler={this.props.viewChanged}
+          {...this.props}
+        />
+        {/* ) : (
+          <>
+            <div className="controls-container">
+              {this.renderQueryBar()}
+              <LegacyToolbar
+                readonly={!this.props.isEditable}
+                insertHandler={this.handleOpenInsert.bind(this)}
+                viewSwitchHandler={this.props.viewChanged}
+                activeDocumentView={this.props.view}
+                {...this.props}
+              />
+            </div>
+            {this.renderOutdatedWarning()}
+          </>
+        )} */}
         {this.renderZeroState()}
         {this.renderContent()}
         {this.renderInsertModal()}

@@ -32,7 +32,9 @@ const editorStyles = cx(
       transition: 'box-shadow .16s ease-in',
       boxShadow: '0 0 0 0 transparent',
     },
-    border: `1px solid ${uiColors.gray.base}`,
+    border: `1px solid ${uiColors.gray.light1}`,
+    // border: '1px solid transparent',
+
     borderRadius: '4px',
     overflow: 'visible',
     background: 'transparent',
@@ -42,7 +44,9 @@ const editorStyles = cx(
         transitionTimingFunction: 'ease-out',
       },
     },
-    '&:focus-within': focusRingVisibleStyles,
+    '&:focus-within': cx(css({
+      borderColor: 'transparent',
+    }), focusRingVisibleStyles)
   })
 );
 
