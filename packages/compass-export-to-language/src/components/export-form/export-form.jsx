@@ -76,8 +76,14 @@ class ExportForm extends PureComponent {
 
 
     const errorDiv = this.props.error
-      ? <Alert bsStyle="danger" className={classnames(styles['export-to-lang-query-input-error'])} children={this.props.error}/>
-      : '';
+      ? (
+        <Alert
+          bsStyle="danger"
+          className={styles['export-to-lang-query-input-error']}
+        >
+          {this.props.error}
+        </Alert>
+      ) : '';
 
     const outputBubbleDiv = this.props.copySuccess === 'output'
       ? <div className={classnames(styles['export-to-lang-query-output-bubble'])}>Copied!</div>
