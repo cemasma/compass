@@ -12,3 +12,6 @@ const QUERY_PROPERTIES = [
 
 export default QUERY_PROPERTIES;
 export { QUERY_PROPERTIES };
+
+// For demo, todo: remove
+export const SHOW_BORDERS = true;

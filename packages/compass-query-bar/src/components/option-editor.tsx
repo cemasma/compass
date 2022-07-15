@@ -15,6 +15,7 @@ import type { Listenable } from 'reflux';
 import type { Ace } from 'ace-builds';
 
 import type { QueryOption as QueryOptionType } from '../constants/query-option-definition';
+import { SHOW_BORDERS } from '../constants/query-properties';
 
 const editorStyles = cx(
   focusRingStyles,
@@ -32,8 +33,9 @@ const editorStyles = cx(
       transition: 'box-shadow .16s ease-in',
       boxShadow: '0 0 0 0 transparent',
     },
-    border: `1px solid ${uiColors.gray.light1}`,
+    border: `1px solid ${SHOW_BORDERS ? uiColors.gray.light2 : 'transparent'}`,
     // border: '1px solid transparent',
+    // borderColor: SHOW_BORDERS ? uiColors.gray.light2 : 'transparent',
 
     borderRadius: '4px',
     overflow: 'visible',

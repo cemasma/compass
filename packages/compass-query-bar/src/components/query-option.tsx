@@ -13,6 +13,7 @@ import type { Listenable } from 'reflux';
 import { OptionEditor } from './option-editor';
 import { OPTION_DEFINITION } from '../constants/query-option-definition';
 import type { QueryOption as QueryOptionType } from '../constants/query-option-definition';
+import { SHOW_BORDERS } from '../constants/query-properties';
 
 const queryOptionStyles = css({
   display: 'flex',
@@ -41,7 +42,8 @@ const numericTextInputStyles = css({
     // Remove these commented styles if we want borders.
     // borderColor: 'transparent',
 
-    borderColor: uiColors.gray.light1,
+    // borderColor: uiColors.gray.light1,
+    borderColor: SHOW_BORDERS ? uiColors.gray.light2 : 'transparent'
   },
 });
 
